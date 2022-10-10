@@ -1,0 +1,18 @@
+﻿@using BlazorApp1.Shared.Card
+
+@if(Data != null){
+    <div class="card text-white bg-primary mb-3">
+        <div class="card-header">@Data.Header</div>
+        <div class="card-body">
+            <img src="@Data.Image">
+            <h4 class="card-title">@Data.Title</h4>
+            <p class="card-text"> @Data.Text</p>
+            @Frammento
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public CardModel? Data { get; set; }
+    [Parameter] public RenderFragment? Frammento {get;set;}
+}

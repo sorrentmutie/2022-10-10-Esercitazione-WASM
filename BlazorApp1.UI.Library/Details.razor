@@ -1,0 +1,17 @@
+﻿@using BlazorApp1.Shared.ReqRes
+
+@typeparam TItem
+
+<EditForm Model="@NewItem" OnValidSubmit="@(() => OnSave.InvokeAsync(NewItem))" >
+    <DataAnnotationsValidator/>
+    @FormFields
+    <button type="submit" class="btn btn-info">OK</button>
+    <button type="button" @onclick="@( () => OnCancel.InvokeAsync())" class="btn btn-info">CANCEL</button>
+</EditForm>
+
+@code {
+    [Parameter] public TItem? NewItem { get; set; }
+    [Parameter] public EventCallback<TItem> OnSave { get; set; }
+    [Parameter] public EventCallback OnCancel { get; set; }
+    [Parameter] public RenderFragment FormFields { get; set; }
+}

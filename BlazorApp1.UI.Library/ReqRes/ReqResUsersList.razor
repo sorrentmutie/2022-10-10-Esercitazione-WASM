@@ -1,0 +1,98 @@
+﻿@using BlazorApp1.Shared.ReqRes
+@inject IReqResData service
+
+<h3>ReqRes Users List</h3>
+<button class="btn btn-danger" @onclick="Cancel">Cancel Request</button>
+<button class="btn btn-danger" @onclick="Create">Create</button>
+
+@Message
+
+
+@if (NewUser != null)
+{
+    <Details TItem="ReqResPostRequest" NewItem="NewUser" OnSave="SalvaForm" OnCancel="ChiudiForm">
+        <FormFields>
+
+            <div class="form-group">
+                <label for="Name">Name</label>
+                <InputText id="Name" class="form-control" @bind-Value="NewUser.Name"></InputText>
+                <ValidationMessage For="@( () => NewUser.Name)"></ValidationMessage>
+            </div>
+
+            <div class="form-group">
+                <label for="Job">Job</label>
+                <InputText id="Job" class="form-control" @bind-Value="NewUser.Job"></InputText>
+                <ValidationMessage For="@( () => NewUser.Job)"></ValidationMessage>
+            </div>
+
+        </FormFields>
+    </Details>
+}
+else
+{
+    @if (response != null)
+    {
+        <section class="cardslist">
+            @if (response.Data != null)
+            {
+                @foreach (var user in response.Data)
+                {
+                    <ReqResUserCard Data="user.ConvertUserToCard()">
+                        <Frammento>
+                            <span class="badge bg-success">Esempio di frammento</span>
+                        </Frammento>
+                    </ReqResUserCard>
+                }
+            }
+
+        </section>
+    }
+    else
+    {
+        <p>Response null</p>
+    }
+}
+
+
+
+@code {
+    private ReqResResponse? response;
+    private string? Message = "";
+    private ReqResPostRequest? NewUser;
+
+    private void Cancel()
+    {
+        service.CancelRequest();
+        Message = "Richiesta cancellata";
+    }
+
+    private void ChiudiForm()
+    {
+        NewUser = null;
+    }
+
+    private async Task SalvaForm(ReqResPostRequest person)
+    {
+        var response = await service.PostData(person);
+        if (response != null)
+        {
+            Message = response.CreatedAt;
+        }
+        NewUser = null;
+    }
+
+
+    private void Create()
+    {
+        //var response =   await service.PostData(new ReqResPostRequest { Name = "Mario Rossi", Job = "Developer" });
+        //if(response != null) {
+        //    Message = response.CreatedAt;
+        //}
+        NewUser = new ReqResPostRequest();
+    }
+
+    protected async override Task OnInitializedAsync()
+    {
+        response = await service.GetResponseData();
+    }
+}
